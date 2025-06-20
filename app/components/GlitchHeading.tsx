@@ -4,12 +4,14 @@ import { useRouter } from 'next/navigation';
 
 const phrases = [
   'Ananya Pratap Singh',
-  'probably sleeping somewhere right now',
-  'creating full stack applications out of pure hate',
-  'probably printing some dope rn',
-  'racist',
+  'a Nazi',
   'listening to Kanye',
   'texting someone I shouldn\'t',
+  'probably sleeping right now',
+  'surviving on caffeine',
+   'using my eyes to lie Chico',
+   'forever indebted to my brother <3',
+  'Racist',
 ];
 
 export default function GlitchHeading(): JSX.Element {
@@ -60,7 +62,7 @@ export default function GlitchHeading(): JSX.Element {
 
   return (
     <motion.div
-      className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white z-50 w-full"
+      className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white z-50 w-[70%]"
       initial={{ scale: 1 }}
       animate={zooming ? { scale: 1.2, opacity: 0 } : { scale: 1, opacity: 1 }}
       transition={{ duration: 0.6, ease: 'easeInOut' }}

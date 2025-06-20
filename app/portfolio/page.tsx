@@ -1,89 +1,95 @@
-"use client";
-import React from 'react';
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+'use client';
 
-const SECTIONS = [
-  { key: "about", label: "About Me" },
-  { key: "experience", label: "Experience" },
-  { key: "nextos", label: "NextOS" },
-  { key: "contact", label: "Contact Me" },
-];
+import { useEffect, useState } from 'react';
+import { BatteryCharging, Folder, Globe, Terminal } from 'lucide-react';
+import { motion } from 'framer-motion';
+import TerminalApp from '@/app/components/TerminalApp';
 
-const DUMMY_CONTENT: Record<string, React.ReactNode> = {
-  about: (
-    <div>
-      <h2 className="text-green-400 text-xl font-mono mb-2">About Me</h2>
-      <p className="font-mono">I'm Ananya, a passionate developer who loves building full stack applications and exploring new tech. I also enjoy customizing Linux environments and creating unique user experiences.</p>
-    </div>
-  ),
-  experience: (
-    <div>
-      <h2 className="text-green-400 text-xl font-mono mb-2">Experience</h2>
-      <ul className="font-mono list-disc ml-5">
-        <li>Full Stack Developer at DummyCorp (2022-2024)</li>
-        <li>Open Source Contributor - NextOS Project</li>
-        <li>Intern at Linux Wizards</li>
-      </ul>
-    </div>
-  ),
-  nextos: (
-    <div>
-      <h2 className="text-green-400 text-xl font-mono mb-2">NextOS</h2>
-      <p className="font-mono">NextOS is my personal project: a Linux-inspired, highly customizable desktop environment built with modern web technologies. Stay tuned for more updates!</p>
-    </div>
-  ),
-  contact: (
-    <div>
-      <h2 className="text-green-400 text-xl font-mono mb-2">Contact Me</h2>
-      <p className="font-mono">Email: ananya@example.com<br/>GitHub: github.com/ananya</p>
-    </div>
-  ),
-};
+export default function DesktopPage() {
+  const [time, setTime] = useState('');
+  const [date, setDate] = useState('');
+  const [day, setDay] = useState('');
+  const [openApp, setOpenApp] = useState<string | null>(null);
 
-export default function Portfolio() {
-  const [selected, setSelected] = useState("about");
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      setDate(now.toLocaleDateString());
+      setDay(now.toLocaleDateString(undefined, { weekday: 'long' }));
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="flex flex-col md:flex-row h-screen w-full">
-      {/* Sidebar */}
-      <aside className="md:w-1/4 w-full md:h-full h-auto flex md:flex-col flex-row md:items-start items-center md:justify-center justify-center py-4 z-10">
-        {SECTIONS.map((section) => (
+    <div className="h-full w-full relative text-white font-mono">
+      {/* Waybar */}
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-6 py-2 flex items-center gap-6 z-50">
+        <span>{day}</span>
+        <span>{date}</span>
+        <span>{time}</span>
+        <div className="flex items-center gap-2">
+          <BatteryCharging size={16} />
+          <span>85%</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Globe size={16} />
+          <span>firefox</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span>↓</span>
+          <span>17.4 Mbps</span>
+          <span>↑</span>
+          <span>5.1 Mbps</span>
+        </div>
+      </div>
+
+      {/* Terminal App Window */}
+      {openApp === 'Terminal' && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.3 }}
+          className="absolute top-20 left-1/2 -translate-x-1/2 
+               w-[600px] h-[400px] rounded-xl             /* <-- rounder corners */
+               bg-white/10 backdrop-blur-md 
+               border border-white/20 p-3 z-40 shadow-lg"
+        >
+          {/* close button only */}
           <button
-            key={section.key}
-            onClick={() => setSelected(section.key)}
-            className={`font-mono text-lg md:text-2xl px-6 py-3 md:w-full w-auto text-left rounded transition-all duration-200 my-1 md:my-2 mx-1 md:mx-0
-              ${selected === section.key ? "text-green-400" : "text-zinc-300 hover:text-white hover:bg-green-400/10 hover:scale-105"}`}
-            style={{ transition: 'all 0.2s cubic-bezier(.4,2,.6,1)' }}
+            onClick={() => setOpenApp(null)}
+            className="absolute top-2 right-2 text-xs px-2 py-1 rounded hover:bg-white/10"
           >
-            {section.label}
+            X
           </button>
-        ))}
-      </aside>
-      {/* Terminal-like Content */}
-      <main className="flex-1 flex items-center justify-center p-4 md:p-12 min-h-[60vh]">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={selected}
-            initial={{ opacity: 0, y: 30, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -30, scale: 0.98 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="w-full max-w-2xl rounded-2xl p-6 font-mono text-zinc-100 relative overflow-auto min-h-[300px] border border-white/80 bg-white/10 backdrop-blur-md shadow-lg"
-          >
-            {/* Terminal header */}
-            <div className="flex items-center mb-4">
-              <span className="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
-              <span className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>
-              <span className="w-3 h-3 rounded-full bg-green-500"></span>
-              <span className="ml-4 text-green-400 text-sm">{SECTIONS.find(s => s.key === selected)?.label}</span>
-            </div>
-            <div className="mt-2">
-              {DUMMY_CONTENT[selected]}
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </main>
+
+          <TerminalApp onExit={() => setOpenApp(null)} />
+        </motion.div>
+      )}
+      {/* Dock */}
+      <motion.div
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 120, damping: 20 }}
+        className="fixed bottom-6 left-1/2 -translate-x-1/2 flex gap-8 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-xl z-50"
+      >
+        <DockIcon icon={<Folder size={24} />} label="Files" onClick={() => setOpenApp('Files')} />
+        <DockIcon icon={<Globe size={24} />} label="Firefox" onClick={() => setOpenApp('Firefox')} />
+        <DockIcon icon={<Terminal size={24} />} label="Terminal" onClick={() => setOpenApp('Terminal')} />
+      </motion.div>
     </div>
+  );
+}
+
+function DockIcon({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
+  return (
+    <button onClick={onClick} className="flex flex-col items-center gap-1 hover:scale-110 transition-transform duration-200">
+      {icon}
+      <span className="text-xs">{label}</span>
+    </button>
   );
 }

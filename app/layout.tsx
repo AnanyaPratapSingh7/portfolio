@@ -47,27 +47,22 @@ export default function RootLayout({
         <AnimatePresence mode="wait">
           <motion.div
             key={pathname}
-            initial={
-              direction === "in"
-                ? { scale: 0.8, opacity: 0 }
-                : direction === "out"
-                ? { scale: 1.2, opacity: 0 }
-                : { scale: 1, opacity: 1 }
-            }
-            animate={{ scale: 1, opacity: 1 }}
-            exit={
-              direction === "in"
-                ? { scale: 1.2, opacity: 0 }
-                : direction === "out"
-                ? { scale: 0.8, opacity: 0 }
-                : { scale: 1, opacity: 0 }
-            }
-            transition={{ duration: 0.6, ease: "easeInOut" }}
             className="relative z-10 h-full"
+            variants={{
+              in: { scale: 0.8, opacity: 0 },
+              out: { scale: 1.2, opacity: 0 },
+              stay: { scale: 1, opacity: 1 },
+            }}
+            initial={direction ? (direction === "in" ? "in" : "out") : "stay"}
+            animate="stay"
+            exit={direction ? (direction === "in" ? "out" : "in") : "out"}
+            transition={{ type: "spring", stiffness: 120, damping: 20 }}
+            style={{ willChange: "transform, opacity", transformOrigin: "50% 50%" }}
           >
             {children}
           </motion.div>
         </AnimatePresence>
+
       </body>
     </html>
   );

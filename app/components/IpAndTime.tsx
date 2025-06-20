@@ -25,6 +25,7 @@ export default function IpAndTime(): JSX.Element {
   return (
     <div className="fixed bottom-6 right-6 text-white font-mono text-right select-none">
       <div className="text-xl opacity-80">Your IP: {ip}</div>
+      {/* {<div className="text-xl opacity-80">Your IP: 183.82.172.154</div>}//For demo */}
 
       <AnimatePresence mode="wait">
         <motion.div
